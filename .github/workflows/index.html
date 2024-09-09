@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Site avec plusieurs onglets</title>
+    <style>
+        /* Style général de la page */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f7fc; /* Arrière-plan de la page */
+        }
+
+        /* Style de l'en-tête */
+        header {
+            background-color: #007BFF; /* Couleur bleu pour l'en-tête */
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        /* Conteneur pour les onglets */
+        .tab-container {
+            display: flex;
+            justify-content: center; /* Centrer les onglets horizontalement */
+            background-color: #e9ecef; /* Couleur plus claire pour les onglets */
+            border-bottom: 2px solid #007BFF;
+            padding: 10px 0; /* Ajouter un peu de padding pour espacer les onglets */
+        }
+
+        /* Style des boutons d'onglet */
+        .tab {
+            background-color: inherit;
+            padding: 14px 16px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-size: 17px;
+            margin-right: 5px;
+            color: #007BFF; /* Couleur du texte des onglets */
+        }
+
+        /* Onglet actif */
+        .tab.active {
+            background-color: #007BFF; /* Onglet actif avec fond bleu */
+            color: white; /* Texte blanc pour l'onglet actif */
+        }
+
+        /* Contenu des onglets */
+        .tab-content {
+            display: none;
+            padding: 20px;
+            background-color: white; /* Fond blanc pour le contenu */
+            margin-top: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Affichage du contenu actif */
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Style des boutons interactifs */
+        .btn {
+            padding: 10px 20px;
+            background-color: #28a745; /* Couleur verte pour les boutons */
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 5px 0;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #218838; /* Vert plus foncé au survol */
+        }
+
+        /* Zone de sortie pour les résultats des actions */
+        .output {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa; /* Arrière-plan gris clair */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Mon site avec plusieurs onglets</h1>
+    </header>
+
+    <!-- Conteneur des onglets -->
+    <div class="tab-container">
+        <button class="tab active" onclick="openTab(event, 'tab1')">Message</button>
+        <button class="tab" onclick="openTab(event, 'tab2')">Embed</button>
+        <button class="tab" onclick="openTab(event, 'tab3')">Ban</button>
+        <button class="tab" onclick="openTab(event, 'tab4')">Clear</button>
+    </div>
+
+    <!-- Contenu des onglets -->
+    <div id="tab1" class="tab-content active">
+        <h2>Commandes de Message</h2>
+        <button class="btn" onclick="sendMessage()">Envoyer un message</button>
+        <button class="btn" onclick="sendAnnouncement()">Envoyer une annonce</button>
+        <button class="btn" onclick="replyMessage()">Répondre à un message</button>
+        <div id="output-message" class="output"></div>
+    </div>
+
+    <div id="tab2" class="tab-content">
+        <h2>Commandes d'Embed</h2>
+        <button class="btn" onclick="createEmbed()">Créer un embed</button>
+        <button class="btn" onclick="setEmbedColor()">Ajouter une couleur</button>
+        <button class="btn" onclick="setEmbedFooter()">Ajouter un pied de page</button>
+        <div id="output-embed" class="output"></div>
+    </div>
+
+    <div id="tab3" class="tab-content">
+        <h2>Commandes de Ban</h2>
+        <button class="btn" onclick="banUser()">Bannir un utilisateur</button>
+        <button class="btn" onclick="unbanUser()">Débannir un utilisateur</button>
+        <button class="btn" onclick="showBanList()">Afficher la liste des bannis</button>
+        <div id="output-ban" class="output"></div>
+    </div>
+
+    <div id="tab4" class="tab-content">
+        <h2>Commandes de Clear</h2>
+        <button class="btn" onclick="clearMessages()">Effacer des messages</button>
+        <button class="btn" onclick="clearAll()">Effacer tout le canal</button>
+        <div id="output-clear" class="output"></div>
+    </div>
+
+    <script>
+        // Fonction pour ouvrir un onglet spécifique
+        function openTab(evt, tabName) {
+            var i, tabContent, tabLinks;
+
+            // Masquer tous les contenus d'onglet
+            tabContent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabContent.length; i++) {
+                tabContent[i].style.display = "none";
+                tabContent[i].classList.remove("active");
+            }
+
+            // Désactiver tous les boutons d'onglet
+            tabLinks = document.getElementsByClassName("tab");
+            for (i = 0; i < tabLinks.length; i++) {
+                tabLinks[i].classList.remove("active");
+            }
+
+            // Afficher le contenu de l'onglet actuel et ajouter la classe "active" au bouton
+            document.getElementById(tabName).style.display = "block";
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Fonctions de simulation des commandes
+        function sendMessage() {
+            document.getElementById('output-message').innerHTML = "Message privé envoyé à l'utilisateur.";
+        }
+
+        function sendAnnouncement() {
+            document.getElementById('output-message').innerHTML = "Annonce globale envoyée à tous les utilisateurs.";
+        }
+
+        function replyMessage() {
+            document.getElementById('output-message').innerHTML = "Réponse envoyée au dernier message privé reçu.";
+        }
+
+        function createEmbed() {
+            document.getElementById('output-embed').innerHTML = "Embed créé avec succès.";
+        }
+
+        function setEmbedColor() {
+            document.getElementById('output-embed').innerHTML = "Couleur d'embed définie sur #FF0000.";
+        }
+
+        function setEmbedFooter() {
+            document.getElementById('output-embed').innerHTML = "Pied de page ajouté à l'embed.";
+        }
+
+        function banUser() {
+            document.getElementById('output-ban').innerHTML = "Utilisateur banni du serveur.";
+        }
+
+        function unbanUser() {
+            document.getElementById('output-ban').innerHTML = "Utilisateur débanni du serveur.";
+        }
+
+        function showBanList() {
+            document.getElementById('output-ban').innerHTML = "Liste des utilisateurs bannis affichée.";
+        }
+
+        function clearMessages() {
+            document.getElementById('output-clear').innerHTML = "10 derniers messages effacés.";
+        }
+
+        function clearAll() {
+            document.getElementById('output-clear').innerHTML = "Tous les messages du canal effacés.";
+        }
+    </script>
+
+</body>
+</html>
