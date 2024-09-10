@@ -1,0 +1,102 @@
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Gestion des onglets
+        const tabs = document.querySelectorAll('.nav-link');
+        const contents = document.querySelectorAll('.tab-pane');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active'));
+                contents.forEach(content => content.classList.remove('show', 'active'));
+
+                this.classList.add('active');
+                const target = document.querySelector(this.getAttribute('data-bs-target'));
+                target.classList.add('show', 'active');
+            });
+        });
+
+        // Fonction pour envoyer des données via POST avec logs dans la console
+        const sendFormData = async (url, formData) => {
+            try {
+                console.log("Envoi des données au serveur : ", formData);
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                });
+                const result = await response.text();
+                console.log('Réponse du serveur:', result);
+            } catch (error) {
+                console.error('Erreur lors de l\'envoi des données:', error);
+            }
+        };
+
+        // Gestion des formulaires avec logs pour chaque action
+        const sendMessageForm = document.getElementById('sendMessageForm');
+        const sendEmbedForm = document.getElementById('sendEmbedForm');
+        const clearMessagesForm = document.getElementById('clearMessagesForm');
+
+        if (sendMessageForm) {
+            sendMessageForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const formData = {
+                    channelId: sendMessageForm.channelId.value,
+                    message: sendMessageForm.message.value,
+                    username: sendMessageForm.username.value,
+                };
+                console.log("Formulaire 'Envoyer un message' soumis avec les données :", formData);
+                sendFormData('/send-message', formData);
+            });
+        }
+
+        if (sendEmbedForm) {
+            sendEmbedForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const formData = {
+                    channelId: sendEmbedForm.channelId.value,
+                    title: sendEmbedForm.title.value,
+                    description: sendEmbedForm.description.value,
+                    color: sendEmbedForm.color.value,
+                };
+                console.log("Formulaire 'Envoyer un Embed' soumis avec les données :", formData);
+                sendFormData('/send-embed', formData);
+            });
+        }
+
+        if (clearMessagesForm) {
+            clearMessagesForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const formData = {
+                    channelId: clearMessagesForm.channelId.value,
+                    count: clearMessagesForm.count.value,
+                };
+                console.log("Formulaire 'Effacer des messages' soumis avec les données :", formData);
+                sendFormData('/clear-messages', formData);
+            });
+        }
+
+        // Connexion WebSocket pour les logs
+        const ws = new WebSocket('ws://localhost:3000');
+        ws.onmessage = (event) => {
+            const consoleOutput = document.getElementById('consoleOutput');
+            if (consoleOutput) {
+                consoleOutput.innerText += event.data + '\n';
+            }
+            console.log('Message reçu du WebSocket:', event.data);
+        };
+
+        ws.onerror = (error) => {
+            console.error('Erreur WebSocket:', error);
+        };
+
+        ws.onopen = () => {
+            console.log('Connexion WebSocket établie');
+        };
+
+        ws.onclose = () => {
+            console.log('Connexion WebSocket fermée');
+        };
+    });
+</script>
